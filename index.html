@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ledgerly – Cash flow for freelancers</title>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f8;--surf:#fff;--ink:#12202e;--mut:#5d6b7a;--line:#e1e6eb;--inc:#1b7f5c;--exp:#d1495b;--tax:#e0a526;--acc:#2447d6;--accsoft:#e8edfc;--r:10px}
+@media(prefers-color-scheme:dark){:root{--bg:#0e151c;--surf:#16202a;--ink:#e8eef4;--mut:#93a1b0;--line:#26323e;--inc:#3fbf93;--exp:#ef6f80;--tax:#f0bb45;--acc:#7b95ff;--accsoft:#1e2b4d}}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 'Schibsted Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--ink);display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+button{font:inherit;cursor:pointer}:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+aside{background:var(--surf);border-right:1px solid var(--line);padding:24px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.logo{font-weight:700;font-size:20px;padding:0 10px 18px;letter-spacing:-.3px}.logo b{color:var(--acc)}
+.nav{background:none;border:0;text-align:left;padding:10px 12px;border-radius:8px;color:var(--mut);font-weight:500}
+.nav:hover{background:var(--bg)}.nav.on{background:var(--accsoft);color:var(--acc);font-weight:600}
+.side-note{margin-top:auto;font-size:12.5px;color:var(--mut);padding:10px;border-top:1px solid var(--line)}
+main{padding:28px 36px 48px;max-width:1280px;width:100%}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;gap:16px}
+h1{margin:0;font-size:28px;letter-spacing:-.6px}header p{margin:2px 0 0;color:var(--mut)}
+.btns{display:flex;gap:8px}.btn{border:1px solid var(--line);background:var(--surf);color:var(--ink);padding:9px 16px;border-radius:8px;font-weight:600}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}.btn:hover{filter:brightness(.95)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.kpi{grid-column:span 3}.kpi small{color:var(--mut);display:block}.kpi strong{font-size:30px;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.kpi em{font-style:normal;font-size:13px;color:var(--mut)}.kpi.tax{border-left:4px solid var(--tax)}
+.w8{grid-column:span 8}.w4{grid-column:span 4}.w12{grid-column:span 12}
+h2{font-size:16px;margin:0 0 14px}.row{display:flex;justify-content:space-between;align-items:center}
+.leg{display:flex;gap:14px;font-size:13px;color:var(--mut)}.leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+svg text{fill:var(--mut);font-size:12px;font-family:inherit}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-weight:500;color:var(--mut);font-size:13px;padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:11px 6px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}td.n,th.n{text-align:right}tr:last-child td{border:0}
+.pill{padding:2px 10px;border-radius:99px;font-size:12.5px;font-weight:600}
+.paid{background:#dff3ea;color:#145c42}.sent{background:var(--accsoft);color:var(--acc)}.overdue{background:#fde3e6;color:#a32a3b}.draft{background:var(--bg);color:var(--mut)}
+.link{background:none;border:0;color:var(--acc);font-weight:600;padding:0}
+.bar{height:10px;background:var(--bg);border-radius:6px;overflow:hidden;margin:10px 0}.bar span{display:block;height:100%;background:var(--tax)}
+.drop{border:2px dashed var(--line);border-radius:var(--r);padding:44px 20px;text-align:center;color:var(--mut);transition:.15s}
+.drop.over{border-color:var(--acc);background:var(--accsoft);color:var(--acc)}
+.drop b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+label{display:block;font-size:13px;color:var(--mut);margin:12px 0 4px}
+input[type=range]{accent-color:var(--acc);padding:0}input,select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surf);color:var(--ink);font:inherit}
+.scan{display:none;margin-top:16px;border:1px solid var(--line);border-radius:var(--r);padding:16px;background:var(--bg)}
+.hide{display:none!important}
+.modal{position:fixed;inset:0;background:rgba(10,18,28,.5);display:none;place-items:center;z-index:9}.modal.open{display:grid}
+.sheet{background:var(--surf);border-radius:14px;padding:26px;width:min(480px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.3);animation:up .18s ease-out}
+@keyframes up{from{transform:translateY(12px);opacity:0}}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);padding:8px 11px;border-radius:8px;font-size:13px;display:none;z-index:20}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:8px;display:none;z-index:30}
+@media(max-width:1000px){body{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap}.side-note{display:none}.kpi{grid-column:span 6}.w8,.w4{grid-column:span 12}main{padding:20px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<aside><div class="logo">Ledger<b>ly</b></div>
+<button class="nav on" data-v="over">Overview</button><button class="nav" data-v="exp">Expenses &amp; receipts</button><button class="nav" data-v="inv">Invoices</button>
+<div class="side-note">Tax holdout is an estimate at a flat rate you choose. It is not tax advice.</div></aside>
+<main>
+<header><div><h1 id="t">Overview</h1><p id="s">October 2026 · all accounts</p></div>
+<div class="btns"><button class="btn" id="addExp">Log expense</button><button class="btn p" id="addInv">New invoice</button></div></header>
+
+<section id="over">
+<div class="grid" id="kpis"></div>
+<div class="grid" style="margin-top:16px">
+<div class="card w8"><div class="row"><h2>Cash flow, May – Dec</h2><div class="leg"><span><i style="background:var(--inc)"></i>Income</span><span><i style="background:var(--exp)"></i>Expenses</span><span><i style="background:var(--tax)"></i>Tax holdout</span></div></div><svg id="chart" viewBox="0 0 700 280" width="100%"></svg><small style="color:var(--mut)">Nov and Dec are forecasts. Income counts only sent and overdue invoices, placed in the month they're due (overdue ones in Nov). Expenses use your 6-month average. New invoices will appear here once you send them.</small></div>
+<div class="card w4"><h2>Tax holdout</h2><label style="margin:0">Estimated rate</label><input type="range" id="rate" min="10" max="40" value="25"><div class="row"><b id="rv">25%</b><span style="color:var(--mut)">of net profit</span></div><div class="bar"><span id="tb"></span></div><div class="row" style="font-size:12.5px;color:var(--mut)"><span>Held for tax</span><span>Yours to keep</span></div><p id="tt" style="color:var(--mut);margin:0"></p><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><h2>Expenses by category</h2><div id="cats"></div></div>
+<div class="card w12"><div class="row"><h2>Recent activity</h2></div><table id="recent"></table></div>
+</div></section>
+
+<section id="exp" class="hide"><div class="grid">
+<div class="card w8"><h2>Drop receipts here</h2>
+<div class="drop" id="drop" tabindex="0"><b>Drag a receipt image or PDF here</b>or <button class="link" id="pick">browse files</button><input type="file" id="file" accept="image/*,.pdf" hidden></div>
+<div class="scan" id="scan"><div class="row"><h2 id="sh" style="margin:0">Reading receipt…</h2></div>
+<div id="sf" class="hide"><div class="two"><div><label>Vendor</label><input id="v"></div><div><label>Amount ($)</label><input id="a" type="number" step="0.01"></div><div><label>Date</label><input id="d" type="date"></div><div><label>Category</label><select id="c"></select></div></div>
+<p style="color:var(--mut);font-size:13px;margin:12px 0">Suggested category from vendor name. Change it if it's wrong.</p><button class="btn p" id="save">Save expense</button> <button class="btn" id="skip">Discard</button></div></div></div>
+<div class="card w4"><h2>This month</h2><strong style="font-size:30px" id="mexp"></strong><p style="color:var(--mut)">across <span id="mcnt"></span> receipts</p></div>
+<div class="card w12"><div class="row"><h2>Receipts by month</h2><select id="mf" style="width:auto"><option value="all">All months</option><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select></div><table id="extab"></table></div></div></section>
+
+<section id="inv" class="hide"><div class="grid" id="invk"></div><div class="card w12" style="margin-top:16px"><h2>All invoices</h2><table id="intab"></table></div></section>
+</main>
+
+<div class="modal" id="m"><div class="sheet" role="dialog" aria-modal="true" aria-label="New invoice"><h2 style="font-size:20px">New invoice</h2>
+<label>Client</label><input id="ic" placeholder="e.g. Northwind Studio">
+<div class="two"><div><label>Amount ($)</label><input id="ia" type="number" min="0"></div><div><label>Due date</label><input id="id" type="date"></div></div>
+<label>Description</label><input id="idesc" placeholder="Brand refresh – phase 2">
+<p id="ierr" style="color:var(--exp);font-size:13px;min-height:18px;margin:8px 0 0"></p>
+<div class="btns" style="justify-content:flex-end;margin-top:10px"><button class="btn" id="icx">Cancel</button><button class="btn" id="isd">Save as draft</button><button class="btn p" id="iss">Send invoice</button></div></div></div>
+<div id="tip"></div><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),fmt=n=>'$'+Math.round(n).toLocaleString('en-US'),fmt2=n=>'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const M=['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let inc=[4200,5100,3900,6200,5600,6800],cats=['Software','Travel','Equipment','Meals','Office','Contractors'];
+let ex=[{v:'Adobe Creative Cloud',a:64.99,d:'2026-10-03',c:'Software'},{v:'Delta Air Lines',a:412,d:'2026-10-09',c:'Travel'},{v:'B&H Photo',a:389.5,d:'2026-10-12',c:'Equipment'},{v:'Blue Door Café',a:46.2,d:'2026-10-15',c:'Meals'},{v:'Staples',a:88.4,d:'2026-10-18',c:'Office'},{v:'Fiverr (illustrator)',a:620,d:'2026-10-21',c:'Contractors'}];
+const mi=d=>d>'2026-10-31'||d<'2026-05-01'?-1:+d.slice(5,7)-5;ex.unshift({v:'Adobe Creative Cloud',a:64.99,d:'2026-05-03',c:'Software'},{v:'Namecheap (domain)',a:18.5,d:'2026-05-07',c:'Software'},{v:'Blue Door Café',a:38.2,d:'2026-05-12',c:'Meals'},{v:'Staples',a:126.31,d:'2026-05-15',c:'Office'},{v:'Fiverr (illustrator)',a:450,d:'2026-05-20',c:'Contractors'},{v:'Delta Air Lines',a:402,d:'2026-05-24',c:'Travel'},{v:'B&H Photo',a:200,d:'2026-05-28',c:'Equipment'},{v:'Adobe Creative Cloud',a:64.99,d:'2026-06-03',c:'Software'},{v:'Notion (annual)',a:96,d:'2026-06-06',c:'Software'},{v:'Delta Air Lines',a:480,d:'2026-06-11',c:'Travel'},{v:'Fiverr (illustrator)',a:600,d:'2026-06-16',c:'Contractors'},{v:'Staples',a:74.61,d:'2026-06-19',c:'Office'},{v:'Blue Door Café',a:54.4,d:'2026-06-23',c:'Meals'},{v:'B&H Photo',a:280,d:'2026-06-27',c:'Equipment'},{v:'Adobe Creative Cloud',a:64.99,d:'2026-07-03',c:'Software'},{v:'Blue Door Café',a:61.5,d:'2026-07-08',c:'Meals'},{v:'Staples',a:43.51,d:'2026-07-13',c:'Office'},{v:'Fiverr (illustrator)',a:500,d:'2026-07-18',c:'Contractors'},{v:'Apple Store',a:380,d:'2026-07-22',c:'Equipment'},{v:'Uber',a:150,d:'2026-07-29',c:'Travel'},{v:'Adobe Creative Cloud',a:64.99,d:'2026-08-03',c:'Software'},{v:'Delta Air Lines',a:560,d:'2026-08-05',c:'Travel'},{v:'Fiverr (illustrator)',a:700,d:'2026-08-12',c:'Contractors'},{v:'B&H Photo',a:310,d:'2026-08-17',c:'Equipment'},{v:'Blue Door Café',a:72.3,d:'2026-08-21',c:'Meals'},{v:'Staples',a:192.71,d:'2026-08-26',c:'Office'},{v:'Adobe Creative Cloud',a:64.99,d:'2026-09-03',c:'Software'},{v:'Delta Air Lines',a:340,d:'2026-09-09',c:'Travel'},{v:'Fiverr (illustrator)',a:550,d:'2026-09-14',c:'Contractors'},{v:'Blue Door Café',a:49.8,d:'2026-09-18',c:'Meals'},{v:'Staples',a:95.21,d:'2026-09-22',c:'Office'},{v:'Apple Store',a:400,d:'2026-09-27',c:'Equipment'});
+let iv=[{id:1041,c:'Northwind Studio',a:2400,due:'2026-10-05',s:'overdue',n:'Brand refresh'},{id:1042,c:'Maple & Co',a:1800,due:'2026-11-02',s:'sent',n:'Website copy'},{id:1043,c:'Hartley Dental',a:3200,due:'2026-11-12',s:'sent',n:'Monthly retainer'},{id:1044,c:'Orchid Bakery',a:950,d:'',due:'2026-10-14',s:'paid',n:'Menu design'},{id:1045,c:'Kite Labs',a:1500,due:'2026-11-30',s:'draft',n:'Landing page'}];
+let rate=.25,nextId=1046;
+const exps=()=>{const r=[0,0,0,0,0,0];ex.forEach(e=>{const k=mi(e.d);if(k>=0)r[k]+=e.a});return r},octExp=()=>exps()[5],net=i=>inc[i]-exps()[i],tax=i=>Math.max(0,net(i)*rate);
+const sum=a=>a.reduce((x,y)=>x+y,0),owed=()=>sum(iv.filter(i=>['sent','overdue'].includes(i.s)).map(i=>i.a));
+function toast(t){const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(e._t);e._t=setTimeout(()=>e.style.display='none',2400)}
+function kpi(l,v,n,c=''){return `<div class="card kpi ${c}"><small>${l}</small><strong>${v}</strong><br><em>${n}</em></div>`}
+function render(){
+ const i=5,t=sum(inc.map((_,k)=>tax(k)));
+ $('#kpis').innerHTML=kpi('Net profit, October',fmt(net(i)),`${fmt(inc[i])} in, ${fmt(exps()[i])} out`)+kpi('Set aside for tax',fmt(t),`year to date at ${Math.round(rate*100)}%`,'tax')+kpi('Unpaid invoices',fmt(owed()),`${iv.filter(x=>x.s=='overdue').length} overdue`)+kpi('Safe to spend',fmt(sum(inc)-sum(exps().slice(0,6))-t),'after expenses and tax');
+ $('#rv').textContent=Math.round(rate*100)+'%';$('#tb').style.width=Math.round(rate*100)+'%';
+ $('#tt').textContent=`Set aside about ${fmt(tax(i))} of October's ${fmt(net(i))} profit. You keep ${fmt(net(i)-tax(i))}.`;
+ chart();
+ const bc={};ex.filter(e=>mi(e.d)==5).forEach(e=>bc[e.c]=(bc[e.c]||0)+e.a);const tot=octExp();
+ $('#cats').innerHTML=Object.entries(bc).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row" style="font-size:14px"><span>${k}</span><span>${fmt(v)}</span></div><div class="bar" style="height:6px;margin:4px 0 10px"><span style="width:${v/tot*100}%;background:var(--exp)"></span></div>`).join('');
+ $('#recent').innerHTML='<tr><th>Item</th><th>Type</th><th class="n">Amount</th></tr>'+[...iv.filter(x=>x.s!='draft').map(x=>[x.c,'Invoice · '+x.s,x.a]),...ex.filter(e=>mi(e.d)==5).slice(-3).map(e=>[e.v,'Expense',-e.a])].map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td class="n" style="color:var(--${r[2]<0?'exp':'inc'})">${r[2]<0?'−':'+'}${fmt2(Math.abs(r[2]))}</td></tr>`).join('');
+ $('#mexp').textContent=fmt2(tot);$('#mcnt').textContent=ex.filter(e=>mi(e.d)==5).length;
+ const mf=$('#mf').value,X=ex.filter(e=>mf=='all'||+e.d.slice(5,7)==+mf).sort((a,b)=>b.d.localeCompare(a.d));
+ $('#extab').innerHTML='<tr><th>Vendor</th><th>Date</th><th>Category</th><th class="n">Amount</th></tr>'+X.map(e=>`<tr><td>${e.v}</td><td>${e.d}</td><td>${e.c}</td><td class="n">${fmt2(e.a)}</td></tr>`).join('')+`<tr><td colspan="3"><b>Total, ${X.length} receipts</b></td><td class="n"><b>${fmt2(sum(X.map(e=>e.a)))}</b></td></tr>`+(X.length?'':'<tr><td colspan="4" style="color:var(--mut)">No receipts for this month yet. Drop one on the upload area to add it.</td></tr>')+(mf!='all'&&(+mf<5||+mf>10)?'<tr><td colspan="4" style="color:var(--mut);font-size:13px">The demo dashboard counts May to October only, so receipts in this month are not in the charts or tax totals.</td></tr>':'');
+ $('#invk').innerHTML=['draft','sent','overdue','paid'].map(s=>{const l=iv.filter(x=>x.s==s);return `<div class="card kpi"><small><span class="pill ${s}">${s[0].toUpperCase()+s.slice(1)}</span></small><strong>${fmt(sum(l.map(x=>x.a)))}</strong><br><em>${l.length} invoice${l.length==1?'':'s'}</em></div>`}).join('');
+ $('#intab').innerHTML='<tr><th>No.</th><th>Client</th><th>For</th><th>Due</th><th>Status</th><th class="n">Amount</th><th></th></tr>'+iv.map(x=>`<tr><td>#${x.id}</td><td>${x.c}</td><td>${x.n||''}</td><td>${x.due}</td><td><span class="pill ${x.s}">${x.s}</span></td><td class="n">${fmt2(x.a)}</td><td class="n">${x.s=='paid'?'':x.s=='draft'?`<button class="link" onclick="act(${x.id},'sent')">Send</button>`:`<button class="link" onclick="act(${x.id},'paid')">Mark paid</button>`}</td></tr>`).join('');
+}
+function act(id,s){const x=iv.find(i=>i.id==id);x.s=s;if(s=='paid'){inc[5]+=x.a;toast(`${fmt(x.a)} added to October income`)}else toast('Invoice sent');render()}
+function chart(){
+ const W=700,H=280,p={l:44,b:28,t:10},bh=H-p.b-p.t,fc=[];
+ const fi=m=>sum(iv.filter(x=>x.s=='overdue'?m==11:x.s=='sent'&&+x.due.slice(5,7)==m).map(x=>x.a)),avgE=sum(exps())/6;
+ const I=[...inc,fi(11),fi(12)],E=[...exps(),avgE,avgE],T=I.map((v,k)=>Math.max(0,(v-E[k])*rate));
+ const mx=Math.ceil(Math.max(...I)/2000)*2000,y=v=>p.t+bh-v/mx*bh,gw=(W-p.l)/8;let s='';
+ for(let g=0;g<=mx;g+=2000)s+=`<line x1="${p.l}" x2="${W}" y1="${y(g)}" y2="${y(g)}" stroke="var(--line)"/><text x="${p.l-8}" y="${y(g)+4}" text-anchor="end">${g/1000}k</text>`;
+ M.forEach((m,k)=>{const x0=p.l+k*gw+gw*.16,w=gw*.22,f=k>5;
+  [[I[k],'inc','Income'],[E[k],'exp','Expenses'],[T[k],'tax','Tax holdout']].forEach(([v,c,n],j)=>{s+=`<rect x="${x0+j*(w+2)}" y="${y(v)}" width="${w}" height="${p.t+bh-y(v)}" rx="3" fill="var(--${c})" opacity="${f?.4:1}" data-t="${m}${f?' (forecast)':''} · ${n}: ${fmt(v)}"/>`});
+  s+=`<text x="${p.l+k*gw+gw/2}" y="${H-8}" text-anchor="middle">${m}</text>`});
+ $('#chart').innerHTML=s;
+}
+document.addEventListener('mousemove',e=>{const t=e.target.dataset&&e.target.dataset.t,tp=$('#tip');if(t){tp.textContent=t;tp.style.display='block';tp.style.left=e.clientX+14+'px';tp.style.top=e.clientY+14+'px'}else tp.style.display='none'});
+const T={over:['Overview','October 2026 · all accounts'],exp:['Expenses & receipts','Drop a receipt and we\'ll fill in the details'],inv:['Invoices','Create, send and track payment']};
+function go(v){document.querySelectorAll('section').forEach(s=>s.classList.toggle('hide',s.id!=v));document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('on',n.dataset.v==v));$('#t').textContent=T[v][0].replace('&amp;','&');$('#s').textContent=T[v][1]}
+document.querySelectorAll('.nav').forEach(n=>n.onclick=()=>go(n.dataset.v));
+$('#rate').oninput=e=>{rate=e.target.value/100;render()};
+// Invoice modal
+const mo=$('#m'),openM=()=>{mo.classList.add('open');$('#ierr').textContent='';$('#ic').focus();const d=new Date();d.setDate(d.getDate()+14);$('#id').value=d.toISOString().slice(0,10)};
+$('#addInv').onclick=openM;$('#icx').onclick=()=>mo.classList.remove('open');mo.onclick=e=>{if(e.target==mo)mo.classList.remove('open')};
+document.addEventListener('keydown',e=>{if(e.key=='Escape')mo.classList.remove('open')});
+function save(s){const c=$('#ic').value.trim(),a=+$('#ia').value;if(!c||!(a>0)){$('#ierr').textContent='Add a client name and an amount above $0.';return}
+ iv.unshift({id:nextId++,c,a,due:$('#id').value,s,n:$('#idesc').value||'Services'});['#ic','#ia','#idesc'].forEach(q=>$(q).value='');mo.classList.remove('open');toast(s=='sent'?'Invoice sent':'Draft saved');render();go('inv')}
+$('#iss').onclick=()=>save('sent');$('#isd').onclick=()=>save('draft');
+$('#addExp').onclick=()=>{go('exp');$('#drop').focus()};
+// Receipt scanner
+$('#c').innerHTML=cats.map(c=>`<option>${c}</option>`).join('');
+const guess=n=>{n=n.toLowerCase();return /adobe|figma|notion|zoom|software/.test(n)?'Software':/air|uber|train|hotel|flight/.test(n)?'Travel':/photo|apple|camera|laptop/.test(n)?'Equipment':/café|cafe|coffee|restaurant|lunch/.test(n)?'Meals':/staples|paper|office/.test(n)?'Office':'Office'};
+function scan(f){const name=f.name.replace(/\.[^.]+$/,'').replace(/[-_]+/g,' ').trim()||'Receipt';$('#scan').style.display='block';$('#sf').classList.add('hide');$('#sh').textContent='Reading '+f.name+'…';
+ setTimeout(()=>{$('#sh').textContent='Check the details';$('#sf').classList.remove('hide');$('#v').value=name.replace(/\b\w/g,c=>c.toUpperCase());$('#a').value=(20+Math.random()*180).toFixed(2);$('#d').value='2026-10-27';$('#c').value=guess(name)},900)}
+const dr=$('#drop');['dragover','dragenter'].forEach(t=>dr.addEventListener(t,e=>{e.preventDefault();dr.classList.add('over')}));['dragleave','drop'].forEach(t=>dr.addEventListener(t,()=>dr.classList.remove('over')));
+dr.addEventListener('drop',e=>{e.preventDefault();e.dataTransfer.files[0]&&scan(e.dataTransfer.files[0])});
+$('#pick').onclick=()=>$('#file').click();dr.onkeydown=e=>{if(e.key=='Enter')$('#file').click()};$('#file').onchange=e=>e.target.files[0]&&scan(e.target.files[0]);
+$('#save').onclick=()=>{const a=+$('#a').value;if(!(a>0)||!$('#v').value){toast('Enter a vendor and an amount');return}ex.push({v:$('#v').value,a,d:$('#d').value,c:$('#c').value});$('#scan').style.display='none';toast(`Saved ${fmt2(a)} to ${$('#c').value}`);render()};
+$('#skip').onclick=()=>$('#scan').style.display='none';
+$('#mf').onchange=render;render();
+</script></body></html>
